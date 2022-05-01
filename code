@@ -1,0 +1,540 @@
+import numpy as np
+from astropy.io import fits
+import matplotlib.pyplot as plt
+def kelt(element):
+    from astropy.io import fits
+    import matplotlib.pyplot as plt
+    import numpy as np
+    size = (300,200) 
+    position = (500,600)
+    from astropy.nddata import Cutout2D
+    cutout = Cutout2D(element, position, size)
+    maxval = np.max(cutout)
+    count = 0
+    M = cutout.data
+    maxval = np.max(M)
+    coords = (-1,-1)
+    
+    for i in range(len(M)):
+        for j in range(len(M[0])):
+            if M [i][j] == maxval:
+                maxval = M[i][j]
+                coords = (j,i)
+    postion2 = (coords)
+    size2 = (40,40)
+    cutout_2 = Cutout2D(cutout.data, postion2, size2)
+    cutout_2 = Cutout2D(cutout.data, coords, size2)
+    b1 = cutout_2.data
+    b1 = np.where(b1<65000,b1,0)
+    b1= b1.astype('float')
+    b1[b1==0]=np.nan
+    #print(b1[25,25])
+    #print(b1)
+    mean1 = np.mean(cutout_2.data)
+    median =np.median(cutout_2.data)
+    print('median', median)
+    b2 = cutout_2.data
+    b2= b2.astype('float')
+    b2 = np.where(b2<median,b2, 0) 
+    #print('values lower than the median:',b2[5:35,5:35])
+    b2[b2==0] = np.nan #Turning all the values to zero 
+    print('values lower than the median:',b2[10:30,10:40])
+    #print('b2 10:30,10:40', b2[10:30,10:40])
+    #print('not sky signal', b2[25,25])
+    b2 = np.nanmean(b2) #taking the average of the remaining values
+    print('average of sky signal:', b2) 
+    #media = np.dot(median, 2)
+    b1 = np.where(b1>median*4, b1, 0) #taking values over median 
+    print('stellar', b1[10:30,10:40])
+    b1[b1==0]=np.nan
+    #print(b1-b2)
+    b1 = b1-b2 #subtracting that average off the b1 values
+    print('data after substracted sky signal:', b1[10:30,10:40])
+    maxval = np.nanmax(b1) #max value for the normalization
+    print('max b1:',maxval)
+    c = b1/maxval #normalise (b1=data with subtracted pixels)c = np.where(c > median, c, np.nan)
+    maxC = np.nanmax(c) #max value, saturated pixels
+    nanC = np.array(c)  
+    nanC = nanC.astype('float')
+    nanC[nanC<0]=np.nan
+    print('max after normalization', maxC)
+    print(nanC[10:30,10:40])
+    import copy
+    cmap = copy.copy(plt.cm.get_cmap('gray'))
+    cmap.set_bad(color='pink')
+    print('THE average:', np.nanmean(nanC))
+    kelt = np.nanmean(nanC)
+    return kelt
+#______________________________________________________________________
+def ref2(element):
+    from astropy.io import fits
+    import matplotlib.pyplot as plt
+    import numpy as np
+    position = (350,630)
+    size = (260,200)  
+    # pixels
+    from astropy.nddata import Cutout2D
+    cutout = Cutout2D(element, position, size)
+    maxval = np.max(cutout)
+    count = 0
+    M = cutout.data
+    maxval = np.max(M)
+    coords = (-1,-1)
+    
+    for i in range(len(M)):
+        for j in range(len(M[0])):
+            if M [i][j] == maxval:
+                maxval = M[i][j]
+                coords = (j,i)
+    postion2 = (coords)
+    size2 = (40,40)
+    cutout_2 = Cutout2D(cutout.data, postion2, size2)
+    cutout_2 = Cutout2D(cutout.data, coords, size2)
+    b1 = cutout_2.data
+    b1 = np.where(b1<65000,b1,0)
+    b1= b1.astype('float')
+    b1[b1==0]=np.nan
+    #print(b1[25,25])
+    #print(b1)
+    mean1 = np.mean(cutout_2.data)
+    median =np.median(cutout_2.data)
+    print('median', median)
+    b2 = cutout_2.data
+    b2= b2.astype('float')
+    b2 = np.where(b2<median,b2, 0) 
+    #print('values lower than the median:',b2[5:35,5:35])
+    b2[b2==0] = np.nan #Turning all the values to zero 
+    print('values lower than the median:',b2[10:30,10:40])
+    #print('b2 10:30,10:40', b2[10:30,10:40])
+    #print('not sky signal', b2[25,25])
+    b2 = np.nanmean(b2) #taking the average of the remaining values
+    print('average of sky signal:', b2) 
+    #media = np.dot(median, 2)
+    b1 = np.where(b1>median*4, b1, 0) #taking values over median 
+    print('stellar', b1[10:30,10:40])
+    b1[b1==0]=np.nan
+    #print(b1-b2)
+    b1 = b1-b2 #subtracting that average off the b1 values
+    print('data after substracted sky signal:', b1[10:30,10:40])
+    maxval = np.nanmax(b1) #max value for the normalization
+    print('max b1:',maxval)
+    c = b1/maxval #normalise (b1=data with subtracted pixels)c = np.where(c > median, c, np.nan)
+    maxC = np.nanmax(c) #max value, saturated pixels
+    nanC = np.array(c)  
+    nanC = nanC.astype('float')
+    nanC[nanC<0]=np.nan
+    print('max after normalization', maxC)
+    print(nanC[10:30,10:40])
+    import copy
+    cmap = copy.copy(plt.cm.get_cmap('gray'))
+    cmap.set_bad(color='pink')
+    print('THE average:', np.nanmean(nanC))
+    ref2=np.nanmean(nanC)
+    return ref2
+#______________________________________________________________________
+def ref1(element):
+    from astropy.io import fits
+    import matplotlib.pyplot as plt
+    import numpy as np
+    position = (300,400)
+    size = (300,200)  
+    # pixels
+    from astropy.nddata import Cutout2D
+    cutout = Cutout2D(element, position, size)
+    maxval = np.max(cutout)
+    count = 0
+    M = cutout.data
+    maxval = np.max(M)
+    coords = (-1,-1)
+    
+    for i in range(len(M)):
+        for j in range(len(M[0])):
+            if M [i][j] == maxval:
+                maxval = M[i][j]
+                coords = (j,i)
+    postion2 = (coords)
+    size2 = (40,40)
+    cutout_2 = Cutout2D(cutout.data, postion2, size2)
+    cutout_2 = Cutout2D(cutout.data, coords, size2)
+    b1 = cutout_2.data
+    b1 = np.where(b1<65000,b1,0)
+    b1= b1.astype('float')
+    b1[b1==0]=np.nan
+    #print(b1[25,25])
+    #print(b1)
+    mean1 = np.mean(cutout_2.data)
+    median =np.median(cutout_2.data)
+    print('median', median)
+    b2 = cutout_2.data
+    b2= b2.astype('float')
+    b2 = np.where(b2<median,b2, 0) 
+    #print('values lower than the median:',b2[5:35,5:35])
+    b2[b2==0] = np.nan #Turning all the values to zero 
+    print('values lower than the median:',b2[10:30,10:40])
+    #print('b2 10:30,10:40', b2[10:30,10:40])
+    #print('not sky signal', b2[25,25])
+    b2 = np.nanmean(b2) #taking the average of the remaining values
+    print('average of sky signal:', b2) 
+    #media = np.dot(median, 2)
+    b1 = np.where(b1>median*4, b1, 0) #taking values over median 
+    print('stellar', b1[10:30,10:40])
+    b1[b1==0]=np.nan
+    #print(b1-b2)
+    b1 = b1-b2 #subtracting that average off the b1 values
+    print('data after substracted sky signal:', b1[10:30,10:40])
+    maxval = np.nanmax(b1) #max value for the normalization
+    print('max b1:',maxval)
+    c = b1/maxval #normalise (b1=data with subtracted pixels)c = np.where(c > median, c, np.nan)
+    maxC = np.nanmax(c) #max value, saturated pixels
+    nanC = np.array(c)  
+    nanC = nanC.astype('float')
+    nanC[nanC<0]=np.nan
+    print('max after normalization', maxC)
+    print(nanC[10:30,10:40])
+    import copy
+    cmap = copy.copy(plt.cm.get_cmap('gray'))
+    cmap.set_bad(color='pink')
+    print('THE average:', np.nanmean(nanC))
+    ref1=np.nanmean(nanC)
+    return ref1
+
+#Ljuskurva för kelt-7b#______________________________________________________________________
+import os
+from astropy.io import fits
+import matplotlib.pyplot as pyplot
+lista=[]
+v =[]
+for element in os.listdir():
+    if element.startswith('Kelt-7_0'):
+        lista.append(element)
+print(lista)
+for element in lista:
+    u =  fits.getdata(element)
+    v.append(u)
+kelt7=[]
+for element in v:
+    kelt7.append(kelt(element))
+
+x_vals = np.linspace(0,len(kelt7),len(kelt7))
+print(kelt7)
+pyplot.plot(x_vals, kelt7,'*', color = 'black')
+pyplot.show()
+
+#ljuskurva för stjärna 2#_______________________________________________________________
+import os
+from astropy.io import fits
+import matplotlib.pyplot as pyplot
+lista=[]
+v =[]
+for element in os.listdir():
+    if element.startswith('Kelt-7_0'):
+        lista.append(element)
+print(lista)
+for element in lista:
+    u =  fits.getdata(element)
+    v.append(u)
+
+print(v)
+
+ave2 =[]
+
+for element in v:
+    ave2.append(ref2(element))
+
+x_vals = np.linspace(0,len(ave2),len(ave2))
+
+print(ave2)
+
+pyplot.plot(x_vals, ave2,'*', color = 'black')
+pyplot.show()
+
+#Ljuskurva för stjärna 1_______________________________________________________________________________
+import os
+from astropy.io import fits
+import matplotlib.pyplot as pyplot
+lista=[]
+v =[]
+for element in os.listdir():
+    if element.startswith('Kelt-7_0'):
+        lista.append(element)
+print(lista)
+for element in lista:
+    u =  fits.getdata(element)
+    v.append(u)
+
+print(v)
+
+ave1 =[]
+
+for element in v:
+    ave1.append(ref1(element))
+
+x_vals = np.linspace(0,len(ave1),len(ave1))
+
+print(ave1)
+
+pyplot.plot(x_vals, ave1,'*', color = 'black')
+pyplot.show()
+
+#Ljuskurvor för samtliga stjärnor plus medelvärde________________________________________
+u=[(g + h+t) / 2 for g, h, t in zip(ave1/np.max(ave1),ave2/np.max(ave2), kelt7/np.max(kelt7))]
+
+u1=u/np.max(u)
+u130 = u1[30:]
+ave22 = ave2/np.max(ave2)
+ave11 = ave1/np.max(ave1)
+kelt77 = kelt7/np.max(kelt7)
+ave1130= ave11[30:]
+ave2230 = ave22[30:]
+kelt7730 = kelt77[30:]
+
+x_valss = np.linspace(0,len(ave1130),len(ave1130))
+
+pyplot.plot(x_valss, u130/np.max(u130), color = 'r',label='Medelvärde av ljuskurvorna', linewidth =3)
+#aa = uniform_filter1d(u130,size=10,mode="nearest")
+plt.plot(x_valss, ave2230/np.max(ave2230),'.', color = 'b',label='stjärna 2' )
+plt.plot(x_valss, ave1130/np.max(ave1130),'.', color = 'g',label='stjärna 1')
+
+plt.plot(x_valss,kelt7730/np.max(kelt7730) ,'.', color = 'k', label='KELT-7')
+#plt.plot(aa/np.max(ave1),color='r', label = 'rörligt medelvärde')
+
+plt.title('Ljuskurva för KELT-7, stjärna 1, stjärna 2')
+plt.xlabel('Fotots nummer')
+plt.ylabel('Normaliserad flux')
+plt.axvline(x=50, color = 'yellow', label ='Planetpassge börjar')
+plt.axvline(x=110, color ='orange', label = 'Planetpassge slutar')
+plt.legend(prop={"size":8})
+plt.ylim([0.8,1])
+
+plt.show()
+
+###funktion för förväntad ljuskurva 2__________________________________________________________________________
+x1=40
+y1=1
+x2=50
+y2=0.98
+def line(x):
+    x1=40
+    y1=1
+    x2=50
+    y2=0.98
+    
+    m=(y2-y1)/(x2-x1)
+    y = m*(x-x1)+y1
+    return y
+
+###funktion för förväntad ljuskurva 1__________________________________________________________________________
+x11=40
+y11=1
+x22=50
+y22=0.99
+def line2(x):
+    x1=40
+    y1=1
+    x2=50
+    y2=0.99
+    
+    m=(y2-y1)/(x2-x1)
+    y = m*(x-x1)+y1
+    return y
+
+
+
+############Ljuskurva för KELT-7 med glidande medelvärde______________________________________________________________________
+#print(kelt7)
+#print(np.max(kelt7))
+from scipy.ndimage import uniform_filter1d
+#pyplot.plot(x_vals, kelt7/np.max(kelt7),'*', color = 'r')
+#pyplot.plot(x_vals, ave2/np.max(ave2),'*', color = 'g')
+plt.axvline(x=50,color = 'yellow', label ='Planetpassge startar')
+plt.axvline(x=110, color ='orange', label = 'Planetpassge slutar')
+
+
+k = (kelt7/np.max(kelt7))/(ave1/np.max(ave1))
+k30=k[30:]
+time = np.linspace(0,len(k30),len(k30))
+
+meank = np.mean(k30[0:52])
+#meank=np.max(k40)
+
+light_list = np.array([float(1)]*len(k30))
+light_list[50:110] = light_list[50:110]-0.01
+
+light_list[40]=line2(40)
+light_list[41]=line2(41)
+light_list[42]=line2(42)
+light_list[43]=line2(43)
+light_list[44]=line2(44)
+light_list[45]=line2(45)
+light_list[46]=line2(46)
+light_list[47]=line2(47)
+light_list[48]=line2(48)
+light_list[49]=line2(49)
+light_list[50]=line2(50)
+
+
+light_list2 = np.array([float(1)]*len(k30))
+light_list2[50:110] = light_list2[50:110]-0.02
+
+light_list2[40]=line(40)
+light_list2[41]=line(41)
+light_list2[42]=line(42)
+light_list2[43]=line(43)
+light_list2[44]=line(44)
+light_list2[45]=line(45)
+light_list2[46]=line(46)
+light_list2[47]=line(47)
+light_list2[48]=line(48)
+light_list2[49]=line(49)
+light_list2[50]=line(50)
+
+
+print(k30/meank)
+plt.title('Ljuskurva för transit av KELT-7b')
+plt.xlabel('Fotots nummer')
+plt.ylabel('Normaliserad flux')
+
+
+plt.ylim([0.9,1.05])
+plt.plot(time,light_list, label = 'Förvantad ljuskurva 1',linewidth=3, color = 'm')
+plt.plot(time,light_list2,label = 'Förväntad ljuskurva 2', linewidth=3, color ='c')
+plt.plot(time,k30/meank,'.',color='k',label ='KELT-7')
+ao = uniform_filter1d(k30, size=17, mode = 'nearest')
+plt.plot(ao/meank, color = 'r', label ='Glidande medelvärde', linewidth=3)
+
+plt.legend(prop={"size":8})
+plt.show()
+
+
+
+
+## Error bars_____________________________________________________________________________________
+import matplotlib.pyplot as plt
+#print(kelt7)
+#print(np.max(kelt7))
+from scipy.ndimage import uniform_filter1d
+plt.figure(facecolor='white')
+#pyplot.plot(x_vals, kelt7/np.max(kelt7),'*', color = 'r')
+#pyplot.plot(x_vals, ave2/np.max(ave2),'*', color = 'g')
+plt.axvline(x=50,color = 'yellow', label ='Planetpassge startar')
+plt.axvline(x=110, color ='orange', label = 'Planetpassge slutar')
+
+
+k = (kelt7/np.max(kelt7))/(ave1/np.max(ave1))
+k30=k[30:]
+time = np.linspace(0,len(k30),len(k30))
+
+meank = np.mean(k30[0:52])
+#meank=np.max(k40)
+
+
+
+
+
+light_list = np.array([float(1)]*len(k30))
+light_list[50:110] = light_list[50:110]-0.01
+
+light_list[40]=line2(40)
+light_list[41]=line2(41)
+light_list[42]=line2(42)
+light_list[43]=line2(43)
+light_list[44]=line2(44)
+light_list[45]=line2(45)
+light_list[46]=line2(46)
+light_list[47]=line2(47)
+light_list[48]=line2(48)
+light_list[49]=line2(49)
+light_list[50]=line2(50)
+
+
+
+light_list2 = np.array([float(1)]*len(k30))
+light_list2[50:110] = light_list2[50:110]-0.02
+
+light_list2[40]=line(40)
+light_list2[41]=line(41)
+light_list2[42]=line(42)
+light_list2[43]=line(43)
+light_list2[44]=line(44)
+light_list2[45]=line(45)
+light_list2[46]=line(46)
+light_list2[47]=line(47)
+light_list2[48]=line(48)
+light_list2[49]=line(49)
+light_list2[50]=line(50)
+
+
+
+
+print(k30/meank)
+plt.title('Ljuskurva för transit av KELT-7b')
+plt.xlabel('Fotots nummer')
+plt.ylabel('Normaliserad flux')
+
+
+medel = [np.average(k30/meank)]
+print(medel)
+ball = [k30/meank]
+for i in medel:
+    for x in ball:
+        v = np.sqrt((np.sum((x-i)**2)/(len(k30)-1)))
+dy=v
+print(v)
+plt.errorbar(time,k30/meank, yerr= dy, fmt ='.k', label = '\u03C3 = 0.028')
+
+
+
+plt.ylim([0.9,1.05])
+plt.plot(time,light_list, label = 'Förvantad ljuskurva 1',linewidth=3, color = 'm')
+plt.plot(time,light_list2,label = 'Förväntad ljuskurva 2', linewidth=3, color ='c')
+plt.plot(time,k30/meank, '.', color='k', label ='KELT-7')
+ao = uniform_filter1d(k30, size=17, mode = 'nearest')
+plt.plot(ao/meank, color = 'r', label ='Glidande medelvärde', linewidth=3)
+
+plt.legend(prop={"size":8})
+plt.show()
+
+
+#________Binnade ljuskurvor______________________________________________________________________________________
+
+givenArray = np.array(k30/meank)
+print(givenArray)
+n = 4
+# calculates the average
+result = np.mean(givenArray.reshape(-1, n), axis=1)
+print(result)
+tid = np.linspace(0,len(result),len(result))
+xaa = []
+for i in range(1, 117):
+    if i % n == 0:
+        xaa.append(i)
+print(xaa)
+plt.figure(facecolor='white')
+plt.axvline(x=50,color = 'yellow', label ='Planetpassge startar')
+plt.axvline(x=110, color ='orange', label = 'Planetpassge slutar')
+
+plt.title('Ljuskurva för transit av KELT-7b')
+plt.xlabel('Fotots nummer')
+plt.ylabel('Normaliserad flux')
+
+
+#plt.plot(time,light_list, label = 'Förvantad ljuskurva 1',linewidth=3, color = 'm')
+#plt.plot(time,light_list2,label = 'Förväntad ljuskurva 2', linewidth=3, color ='c')
+plt.ylim([0.9,1.05])
+plt.plot(time,k30/meank, 'o',markersize=3, color='gray', label ='KELT-7')
+plt.plot(xaa, result,'o', markersize=5, color='r', label ='KELT-7')
+ao = uniform_filter1d(result, size=6, mode = 'nearest')
+#plt.plot(ao, color = 'r', label ='Glidande medelvärde', linewidth=3)
+#plt.plot(xaa, result, 'o', color='r', label ='KELT-7')
+
+medel = [np.average(result)]
+print(medel)
+ball = [result]
+for i in medel:
+    for x in ball:
+        v = np.sqrt((np.sum((x-i)**2)/(len(result)-1)))
+dy=v
+print(v)
+plt.errorbar(xaa, result, yerr= dy, fmt ='.k', label = '\u03C3 = 0,015')
+plt.legend(prop={"size":8})
+plt.show()
